@@ -2,6 +2,8 @@
 //base endpoint for searching specific data
 // add a value in the link to run [?ID=1]
 header("Content-Type: application/json");
+require_once "auth.php";
+require_authenticated_session();
 include "db.php";
 
 if(!isset($_GET['ID'])){

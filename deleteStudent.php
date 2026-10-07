@@ -1,5 +1,7 @@
 <?php
 header('Content-Type: application/json');
+require_once 'auth.php';
+require_authenticated_session();
 require_once 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {

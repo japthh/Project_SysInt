@@ -3,8 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Student Records</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        document.documentElement.style.visibility = "hidden";
+        fetch("auth.php", { cache: "no-store" })
+            .then(response => {
+                if (!response.ok) throw new Error("Unable to check login status.");
+                return response.json();
+            })
+            .then(data => {
+                if (!data.authenticated) {
+                    window.location.replace("login.html");
+                    return;
+                }
+                const loadStudentApp = () => {
+                    const appScript = document.createElement("script");
+                    appScript.src = "script.js";
+                    document.body.appendChild(appScript);
+                };
+                const logoutButton = document.getElementById("logoutButton");
+                logoutButton.addEventListener("click", async () => {
+                    logoutButton.disabled = true;
+
+                    try {
+                        const response = await fetch("auth.php?action=logout", { method: "POST" });
+                        const result = await response.json();
+
+                        if (!response.ok || !result.success) {
+                            throw new Error("Unable to log out. Please try again.");
+                        }
+
+                        window.location.replace("login.html");
+                    } catch (error) {
+                        logoutButton.disabled = false;
+                        document.getElementById("message").textContent = error.message;
+                    }
+                });
+                document.documentElement.style.visibility = "visible";
+                if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", loadStudentApp, { once: true });
+                } else {
+                    loadStudentApp();
+                }
+            })
+            .catch(() => window.location.replace("login.html"));
+    </script>
 </head>
 
 <body>
@@ -24,7 +68,10 @@
 
     <p id="message"></p>
 
-    <h1>Student List</h1>
+    <header class="page-header">
+        <h1>Student List</h1>
+        <button type="button" id="logoutButton">Log out</button>
+    </header>
     <table>
         <thead>
             <tr>
@@ -39,6 +86,5 @@
 
     <main id="studentsDetails"></main>
 
-<script src="script.js"></script>
 </body>
 </html>
