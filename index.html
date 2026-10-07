@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div>
+        <form id="studentForm" action="studentForm">
+            <label for="Fullname">Fullname:</label>
+            <input type="text" id="Fullname" name="Fullname" required>
+            <br>
+            <label for="Course">Course:</label>
+            <input type="text" id="Course" name="Course" required>
+            <br><br>
+            <button type="submit">Add Student</button>
+            <br>
+
+        </form>
+    </div>
+
+    <p id="message"></p>
+
+    <h1>Student List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fullname</th>
+                <th>Course</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="studentTable"></tbody>
+    </table>
+
+    <main id="studentsDetails"></main>
+
+<script src="script.js"></script>
+</body>
+</html>
