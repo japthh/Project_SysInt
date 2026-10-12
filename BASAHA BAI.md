@@ -1,5 +1,3 @@
-# Project Study Notes
-
 ## Project Overview
 This project is a simple student record management system built with PHP, MySQL, HTML, and JavaScript. It supports:
 
@@ -10,14 +8,6 @@ This project is a simple student record management system built with PHP, MySQL,
 - deleting a student
 
 The app is designed as a small web application for practicing CRUD operations and session-based authentication.
-
----
-
-## Tech Stack
-- Frontend: HTML, CSS, JavaScript
-- Backend: PHP
-- Database: MySQL / MariaDB
-- Server: Apache / local PHP server environment
 
 ---
 
