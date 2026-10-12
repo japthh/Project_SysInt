@@ -1,22 +1,20 @@
 <?php
-//load all student endpoint
+// Return the full list of students as JSON for the JavaScript front end.
 header("Content-Type: application/json");
 require_once "auth.php";
 require_authenticated_session();
-include "db.php";                   //connects db.php
-$sql = "SELECT * FROM students";    //selects all queries from the table in DB
-$result = $conn->query($sql);       //get the executed query
-$students = [];                     //inday uno ini na variable
+include "db.php";
 
-if ($result === false) {
-    http_response_code(500);
-    echo json_encode(["success" => false, "message" => "Unable to load students"]);
-    $conn->close();
-    exit;
-}
-while($row = $result->fetch_assoc()){//loops result and stores it in json format
+// Fetch all rows from the students table.
+$result = $conn->query("SELECT * FROM students");
+$students = [];
+
+// Loop through each record and store it in an array.
+while ($row = $result->fetch_assoc()) {
     $students[] = $row;
 }
+
+// Send the student records to the browser as JSON.
 echo json_encode($students);
 $conn->close();
 ?>

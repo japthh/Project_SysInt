@@ -7,45 +7,30 @@
     <link rel="stylesheet" href="style.css">
     <script>
         document.documentElement.style.visibility = "hidden";
+
         fetch("auth.php", { cache: "no-store" })
-            .then(response => {
-                if (!response.ok) throw new Error("Unable to check login status.");
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (!data.authenticated) {
                     window.location.replace("login.html");
                     return;
                 }
-                const loadStudentApp = () => {
-                    const appScript = document.createElement("script");
-                    appScript.src = "script.js";
-                    document.body.appendChild(appScript);
-                };
+
+                const appScript = document.createElement("script");
+                appScript.src = "script.js";
+                document.body.appendChild(appScript);
+
                 const logoutButton = document.getElementById("logoutButton");
                 logoutButton.addEventListener("click", async () => {
-                    logoutButton.disabled = true;
+                    const response = await fetch("auth.php?action=logout", { method: "POST" });
+                    const result = await response.json();
 
-                    try {
-                        const response = await fetch("auth.php?action=logout", { method: "POST" });
-                        const result = await response.json();
-
-                        if (!response.ok || !result.success) {
-                            throw new Error("Unable to log out. Please try again.");
-                        }
-
+                    if (result.success) {
                         window.location.replace("login.html");
-                    } catch (error) {
-                        logoutButton.disabled = false;
-                        document.getElementById("message").textContent = error.message;
                     }
                 });
+
                 document.documentElement.style.visibility = "visible";
-                if (document.readyState === "loading") {
-                    document.addEventListener("DOMContentLoaded", loadStudentApp, { once: true });
-                } else {
-                    loadStudentApp();
-                }
             })
             .catch(() => window.location.replace("login.html"));
     </script>
@@ -53,7 +38,7 @@
 
 <body>
     <div>
-        <form id="studentForm" action="studentForm">
+        <form id="studentForm">
             <label for="Fullname">Fullname:</label>
             <input type="text" id="Fullname" name="Fullname" required>
             <br>
@@ -62,7 +47,6 @@
             <br><br>
             <button type="submit">Add Student</button>
             <br>
-
         </form>
     </div>
 
@@ -72,6 +56,7 @@
         <h1>Student List</h1>
         <button type="button" id="logoutButton">Log out</button>
     </header>
+
     <table>
         <thead>
             <tr>
@@ -85,6 +70,5 @@
     </table>
 
     <main id="studentsDetails"></main>
-
 </body>
 </html>

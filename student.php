@@ -1,33 +1,31 @@
 <?php
-//base endpoint for searching specific data
-// add a value in the link to run [?ID=1]
+// Return a single student record based on the ID in the URL.
 header("Content-Type: application/json");
 require_once "auth.php";
 require_authenticated_session();
 include "db.php";
 
-if(!isset($_GET['ID'])){
+// Get the student ID from the query string and validate it.
+$id = filter_input(INPUT_GET, "ID", FILTER_VALIDATE_INT);
+
+if ($id === false || $id === null) {
     http_response_code(400);
-    echo json_encode(["message" => "Student ID is required baii"]);
-    exit;
-}
-$ID = filter_input(INPUT_GET, 'ID', FILTER_VALIDATE_INT);
-if ($ID === false || $ID === null) {
-    http_response_code(400);
-    echo json_encode(["message" => "Student ID must be an integer"]);
+    echo json_encode(["message" => "Student ID is required"]);
     exit;
 }
 
+// Search the database for the matching student row.
 $stmt = $conn->prepare("SELECT * FROM students WHERE ID = ?");
-$stmt->bind_param("i", $ID);
+$stmt->bind_param("i", $id);
 $stmt->execute();
-$result = $stmt->get_result();//execute query
+$result = $stmt->get_result();
 
-if($result->num_rows > 0){
-    $student = $result->fetch_assoc();
-    echo json_encode($student);
-}else{
-    echo json_encode(["message" => "Student not found baiiii"]);
+// If the student exists, return that row; otherwise, return a not-found response.
+if ($result->num_rows > 0) {
+    echo json_encode($result->fetch_assoc());
+} else {
+    echo json_encode(["message" => "Student not found"]);
 }
+
 $conn->close();
-?>  
+?>

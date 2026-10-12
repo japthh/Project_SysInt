@@ -1,17 +1,15 @@
 <?php
-//initializes DB connection
+// Database connection settings used by all PHP files in the project.
 $host = "localhost";
-$user = "root";                 //DB username
-$password = '';                 //DB Password
-$database = "school";           //DB name
+$user = "root";
+$password = "";
+$database = "school";
 
-$conn = new mysqli($host, $user, $password, $database);//create connection via mysqli, PLEASE DO NOT FORGET THE ARRANGEMENTS JUSQQ
+// Create a connection to the MySQL database.
+$conn = new mysqli($host, $user, $password, $database);
 
-//check if connection success/failed
-if($conn->connect_error){
-    die("connection failed".$conn->connect_error);
+// Stop the script if the connection fails so the app does not continue with no DB access.
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
-
-
-
 ?>

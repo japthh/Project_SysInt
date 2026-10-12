@@ -1,20 +1,17 @@
+// This file handles the login page behavior.
 const loginForm = document.getElementById("loginForm");
 const loginMessage = document.getElementById("loginMessage");
 
+// Before showing the login page, check if the user is already logged in.
 fetch("auth.php", { cache: "no-store" })
-    .then(response => {
-        if (!response.ok) throw new Error("Unable to check login status.");
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         if (data.authenticated) {
             window.location.replace("index.html");
         }
-    })
-    .catch(error => {
-        loginMessage.textContent = error.message;
     });
 
+// When the login form is submitted, send the credentials to the backend.
 loginForm.addEventListener("submit", async event => {
     event.preventDefault();
     loginMessage.textContent = "";
@@ -22,21 +19,18 @@ loginForm.addEventListener("submit", async event => {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    try {
-        const response = await fetch("login.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password })
-        });
-        const data = await response.json();
+    const response = await fetch("login.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+    });
 
-        if (!response.ok || !data.success) {
-            loginMessage.textContent = data.message || "Unable to log in.";
-            return;
-        }
+    const data = await response.json();
 
+    // If the login succeeds, redirect the user to the dashboard.
+    if (data.success) {
         window.location.replace("index.html");
-    } catch (error) {
-        loginMessage.textContent = "Unable to reach the server. Please try again.";
+    } else {
+        loginMessage.textContent = data.message || "Login failed";
     }
 });
