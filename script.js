@@ -5,8 +5,17 @@ const message = document.getElementById("message");
 
 // Fetch the list of students from the backend and display them in the table.
 function loadStudents() {
-    fetch("http://localhost/htjap/students.php")
-        .then(response => response.json())
+    fetch("students.php")
+        .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || "Unable to load student records");
+            }
+            if (!Array.isArray(data)) {
+                throw new Error("The server returned an invalid student list");
+            }
+            return data;
+        })
         .then(data => {
             let output = "";
             data.forEach(student => {
@@ -22,6 +31,10 @@ function loadStudents() {
                     </tr>`;
             });
             studentTable.innerHTML = output;
+        })
+        .catch(error => {
+            studentTable.innerHTML = "";
+            message.textContent = `Unable to load student records: ${error.message}`;
         });
 }
 
@@ -30,7 +43,7 @@ loadStudents();
 
 // Get one student by ID and show the student details in the page.
 function viewStudents(ID) {
-    fetch(`http://localhost/htjap/student.php?ID=${ID}`)
+    fetch(`student.php?ID=${ID}`)
         .then(response => response.json())
         .then(student => {
             document.getElementById("studentsDetails").innerHTML = `
